@@ -117,7 +117,6 @@ export class ProjectChecker extends Web3Checker {
         return this
     }
 
-
     // 测试节点延迟和实时Gwei
     async testRpcLatency(rpcOrChians: SupportChainType | string | (SupportChainType | string)[]) {
         rpcOrChians = Array.isArray(rpcOrChians) ? rpcOrChians : [rpcOrChians]
