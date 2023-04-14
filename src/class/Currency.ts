@@ -45,77 +45,82 @@ export class CurrencyNative extends CurrencyModel {
         return bn_fromWei(_balance, this.decimals, fixed)
     }
 
-    async transfer(signer: ethers.Wallet, toAddress: string, amount: number | string | 'Max') {
+    async transfer(signer: ethers.Wallet, toAddress: string, amount: 'Max' | number, multiple = 1) {
+        signer = signer.connect(this.provider)
         let amountBn: BigNumber
+        let gasPriceBn = await this.provider.getGasPrice()
+        let gasLimit = 21000
+
+        let gasPrice = gasPriceBn.div(10000).mul((multiple * 10000).toFixed(0))
 
         if (amount === 'Max') {
             const balanceBn = await this.provider.getBalance(signer.address)
-            const gasPriceBn = await this.provider.getGasPrice()
-            amountBn = balanceBn.sub(gasPriceBn.mul(21000))
+            amountBn = balanceBn.sub(gasPrice.mul(gasLimit))
         } else {
             amountBn = ethers.utils.parseEther(`${amount}`)
         }
 
+        if (amountBn.lte(0)) throw new Error("The balance is invalid");
+
         const transaction: ethers.utils.Deferrable<ethers.providers.TransactionRequest> = {
             to: toAddress,
-            value: amountBn
+            value: amountBn,
+            gasPrice: gasPrice,
+            gasLimit: gasLimit
         }
+
+        await signer.estimateGas(transaction)
         return signer.sendTransaction(transaction)
     }
 }
 
 export class CurrencyErc20 extends CurrencyModel {
-    public readonly assetsContract: ethers.Contract
+    public readonly contract: ethers.Contract
 
-    constructor(chain: SupportChainType, tokenAddress: string) {
-        super(chain, 'ERC20', tokenAddress)
-        this.assetsContract = UniversalErc20__factory.connect(tokenAddress, this.provider)
+    constructor(chain: SupportChainType, address: string) {
+        super(chain, 'ERC20', address)
+        this.contract = UniversalErc20__factory.connect(address, this.provider)
         this.initialize()
     }
 
     async initialize() {
-        this.symbol = await this.assetsContract.symbol()
-        this.decimals = await this.assetsContract.decimals()
-        this.name = await this.assetsContract.name()
+        this.symbol = this.symbol && await this.contract.symbol()
+        this.decimals = this.decimals && await this.contract.decimals()
+        this.name = this.name && await this.contract.name()
 
         return this
     }
 
-    async totalSupply() {
-        const _totalSupply = await this.assetsContract.totalSupply()
-        return bn_fromWei(_totalSupply, this.decimals)
-    }
-
     async balanceOf(account: string | ethers.Wallet) {
         const address = typeof account === 'string' ? account : account.address
-        const _amount = await this.assetsContract.balanceOf(address)
+        const _amount = await this.contract.balanceOf(address)
         return bn_parseWei(_amount, this.decimals)
     }
 
     async amountOf(account: string | ethers.Wallet, fixed = 4) {
         const address = typeof account === 'string' ? account : account.address
-        const _amount = await this.assetsContract.balanceOf(address)
+        const _amount = await this.contract.balanceOf(address)
         return bn_fromWei(_amount, this.decimals, fixed)
     }
 
     async allowance(owner: string, spender: string) {
-        const _allowance = await this.assetsContract.allowance(owner, spender)
+        const _allowance = await this.contract.allowance(owner, spender)
         return bn_fromWei(_allowance, this.decimals)
     }
 
-    async approve(signer: ethers.Wallet, spender: string, amount: number | 'Max') {
+    async approve(signer: ethers.Wallet, spender: string, amount: 'Max' | number) {
         const amountWei = amount === 'Max' ? MAX_ALLOWANCE : bn_toWei(amount, this.decimals)
-        const assetsContractWithSigner = this.assetsContract.connect(signer)
+        const contractWithSigner = this.contract.connect(signer)
         const approveArgs = [spender, amountWei]
-        await assetsContractWithSigner.estimateGas.approve(approveArgs)
-        return assetsContractWithSigner.approve(approveArgs) as ethers.ContractTransaction
+        await contractWithSigner.estimateGas.approve(approveArgs)
+        return contractWithSigner.approve(approveArgs) as ethers.ContractTransaction
     }
 
     async transfer(signer: ethers.Wallet, toAddress: string, amount: number | string | 'Max') {
-        const assetsContractWithSigner = this.assetsContract.connect(signer)
+        const contractWithSigner = this.contract.connect(signer)
         let amountWei = amount === 'Max' ? await this.balanceOf(signer.address) : bn_toWei(amount, this.decimals)
         const transferArgs = [toAddress, amountWei]
-        await assetsContractWithSigner.estimateGas.transfer(transferArgs)
-        return assetsContractWithSigner.transfer(transferArgs)
+        await contractWithSigner.estimateGas.transfer(transferArgs)
+        return contractWithSigner.transfer(transferArgs)
     }
 }
