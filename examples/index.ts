@@ -1,5 +1,1 @@
-export const main = async () => {
-    
-}
-
-main()
+import './checker'

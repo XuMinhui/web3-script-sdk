@@ -15,7 +15,7 @@ const MainnetChainState: Record<MainnetChain, IChainConfig> = {
     [MainnetChain.Binance]: {
         name: 'Binance Smart Chain',
         chainId: 56,
-        rpcUrls: ["https://bsc-dataseed3.defibit.io"],
+        rpcUrls: ["https://bsc.blockpi.network/v1/rpc/public"],
         nativeCurrency: {
             name: 'Binance BNB',
             symbol: 'BNB',
@@ -38,7 +38,7 @@ const MainnetChainState: Record<MainnetChain, IChainConfig> = {
         name: 'Optimism',
         chainId: 10,
         rpcUrls: [
-            "https://mainnet.optimism.io"
+            "https://endpoints.omniatech.io/v1/op/mainnet/public"
         ],
         nativeCurrency: {
             name: 'Optimism ETH',

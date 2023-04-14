@@ -91,6 +91,11 @@ export class CurrencyErc20 extends CurrencyModel {
         return this
     }
 
+    async totalSupply() {
+        const _totalSupply = await this.contract.totalSupply()
+        return bn_fromWei(_totalSupply, this.decimals)
+    }
+
     async balanceOf(account: string | ethers.Wallet) {
         const address = typeof account === 'string' ? account : account.address
         const _amount = await this.contract.balanceOf(address)

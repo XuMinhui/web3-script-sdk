@@ -4,6 +4,8 @@ import { existsSync } from "fs";
 import { SupportChainType } from "../web3/type";
 import { chainState } from "../web3/chainState";
 import { ethers } from "ethers";
+import { bn_fromWei } from "../utils";
+import pTimeout from "p-timeout";
 
 export class Web3Checker {
     static isAddress(address: string) {
@@ -27,16 +29,46 @@ export class Web3Checker {
     }
 }
 
-export class ProjectChecker {
-    readonly title: string
-    readonly errorMessages: string[] = [`❌ Parameter configuration detection failed\n`]
-    readonly warningMessages: string[] = [`🐝 Parameter configuration detection warning\n`]
-    readonly successMessages: string[] = [`✅ Operation parameter configuration detection passed\n`]
+type messageType = 'Success' | 'Warning' | 'Error'
+// type web3RuleType = 'Address' | 'PrivateKey' | 'Mnemonic'
 
-    readonly result: Object = {}
+export class ProjectChecker extends Web3Checker {
+    readonly title: string
+    private errorMessages: string[] = [`❌ Parameter configuration detection failed\n`]
+    private warningMessages: string[] = [`🐝 Parameter configuration detection warning\n`]
+    private successMessages: string[] = [`✅ Operation parameter configuration detection passed\n`]
+
+    private result: any = {}
 
     constructor(title: string = '') {
+        super()
         this.title = title
+    }
+
+    private wrapMessage(message: string | string[]) {
+        const messages = typeof message === 'string' ? [message] : message
+        const regExp = /^(- )(.+)/gi
+        const list = messages.map(message => {
+            return regExp.test(message) ? message : `- ${message}`
+        })
+
+        return list
+    }
+
+    pushMessage(type: messageType, message: string | string[]) {
+        switch (type) {
+            case 'Error':
+                this.errorMessages = this.errorMessages.concat(this.wrapMessage(message))
+                break;
+            case 'Warning':
+                this.warningMessages = this.warningMessages.concat(this.wrapMessage(message))
+                break;
+            case 'Success':
+                this.successMessages = this.successMessages.concat(this.wrapMessage(message))
+                break;
+            default:
+                break;
+        }
     }
 
     sayResult(isErrorExit: boolean = true) {
@@ -67,39 +99,53 @@ export class ProjectChecker {
         }
     }
 
+    getResult<T>(): T {
+        return this.result
+    }
 
     checkFileExist(absolutPath: string) {
         const isExitsAccountsFile = existsSync(absolutPath)
-        if (!isExitsAccountsFile) this.errorMessages.push(`- PATH_NOT_EXIST: path does not exist (${absolutPath})`)
+        if (!isExitsAccountsFile) this.pushMessage('Error', `PATH_NOT_EXIST: path does not exist (${absolutPath})`)
         return this
     }
 
     // 验证配置是否符合规则
     checkValidate(config: any, validateSchema: Joi.ObjectSchema<any>) {
-        const { error } = validateSchema.validate(config, { abortEarly: false })
-        error && error.details.forEach((err: any) => this.errorMessages.push(`- PARAMTER_ERROR: ${err.message}`))
-
+        const { error, value } = validateSchema.validate(config, { abortEarly: false })
+        error && error.details.forEach((err: any) => this.pushMessage('Error', `PARAMTER_ERROR: ${err.message}`))
+        this.result = { ...value }
         return this
     }
 
-    async checkRpcLatency(rpcOrChian: SupportChainType | string) {
-        let rpc = typeof rpcOrChian === 'string' ? chainState[rpcOrChian as SupportChainType].rpcUrls[0] : rpcOrChian
-        const provider = new ethers.providers.JsonRpcProvider(rpc)
 
-        const pattern = /(\S)\/[0-9a-fA-F]+$/;
-        const replacement = "$1/<PRIVATE_NODE>";
-        const regex = new RegExp(pattern);
-        const showRpc = rpc.replace(regex, replacement);
+    // 测试节点延迟和实时Gwei
+    async testRpcLatency(rpcOrChians: SupportChainType | string | (SupportChainType | string)[]) {
+        rpcOrChians = Array.isArray(rpcOrChians) ? rpcOrChians : [rpcOrChians]
+        const testRpcTasksPromises = rpcOrChians.map(async (rpcOrChian) => {
+            let rpc = Object.keys(chainState).includes(rpcOrChian) ? chainState[rpcOrChian as SupportChainType].rpcUrls[0] : rpcOrChian
+            const provider = new ethers.providers.JsonRpcProvider(rpc)
+            const timeout = 5000
+            const pattern = /(\S)\/[0-9a-fA-F]+$/;
+            const replacement = "$1/<PRIVATE_NODE>";
+            const regex = new RegExp(pattern);
+            const showRpc = rpc.replace(regex, replacement);
 
-        try {
-            const startTime = Date.now()
-            await provider.getBlockNumber()
-            const latencyTime = Date.now() - startTime
+            try {
+                const startTime = Date.now()
+                const gasPrice = await pTimeout(provider.getGasPrice(), timeout, `time out for ${timeout}ms`)
 
-            this.successMessages.push(`- Latency: ${latencyTime}ms (${showRpc})`)
-        } catch (error: any) {
-            this.errorMessages.push(`- ${error.code}: ${error.reason}  (${showRpc})`)
-        }
-        return this
+                const latencyTime = Date.now() - startTime
+
+                this.pushMessage('Success', `Latency: ${latencyTime}ms ( ${showRpc} ) [Gas: ${bn_fromWei(gasPrice, 9, 4)}]`)
+            } catch (error: any) {
+                if (error instanceof Error) {
+                    this.pushMessage('Error', `${error.message}  (${showRpc})`)
+                } else {
+                    this.pushMessage('Error', `${error.code}: ${error.reason}  (${showRpc})`)
+                }
+            }
+        })
+
+        await Promise.all(testRpcTasksPromises)
     }
 }
