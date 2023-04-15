@@ -6,9 +6,23 @@
     "url": "https://yitian.blog"
   },
   "description": "web3-script-sdk",
-  "version": "1.1.5",
+  "version": "1.1.7",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./utils": {
+      "require": "./dist/utils/index.js",
+      "import": "./dist/utils/index.js"
+    },
+    "./web3": {
+      "require": "./dist/web3/index.js",
+      "import": "./dist/web3/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -17,7 +31,7 @@
     "web3",
     "script"
   ],
-  "repository": "https://github.com/XuMinhui/create-web3-script",
+  "repository": "https://github.com/XuMinhui/web3-script-sdk",
   "license": "MIT",
   "dependencies": {
     "@types/jest": "^29.5.0",

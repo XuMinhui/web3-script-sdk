@@ -1,6 +1,4 @@
 export * from './chainState'
 export * from './constants'
-export * from './address'
-export * from './utils'
+export * from './addresses'
 export * from './type'
-export * from './types'

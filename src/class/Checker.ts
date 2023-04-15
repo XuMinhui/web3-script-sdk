@@ -1,11 +1,10 @@
 import boxen from "boxen";
 import Joi from "joi";
 import { existsSync } from "fs";
-import { SupportChainType } from "../web3/type";
-import { chainState } from "../web3/chainState";
 import { ethers } from "ethers";
 import { bn_fromWei } from "../utils";
 import pTimeout from "p-timeout";
+import { chainStateList, SupportChainType } from "../web3";
 
 export class Web3Checker {
     static isAddress(address: string) {
@@ -121,7 +120,7 @@ export class ProjectChecker extends Web3Checker {
     async testRpcLatency(rpcOrChians: SupportChainType | string | (SupportChainType | string)[]) {
         rpcOrChians = Array.isArray(rpcOrChians) ? rpcOrChians : [rpcOrChians]
         const testRpcTasksPromises = rpcOrChians.map(async (rpcOrChian) => {
-            let rpc = Object.keys(chainState).includes(rpcOrChian) ? chainState[rpcOrChian as SupportChainType].rpcUrls[0] : rpcOrChian
+            let rpc = Object.keys(chainStateList).includes(rpcOrChian) ? chainStateList[rpcOrChian as SupportChainType].rpcUrls[0] : rpcOrChian
             const provider = new ethers.providers.JsonRpcProvider(rpc)
             const timeout = 5000
             const pattern = /(\S)\/[0-9a-fA-F]+$/;

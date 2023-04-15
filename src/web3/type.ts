@@ -1,20 +1,15 @@
-export enum MainnetChain {
+export enum SupportChain {
     Ethereum = 'Ethereum',
     Binance = 'Binance',
     Arbitrum = 'Arbitrum',
     Optimism = 'Optimism',
-    Polygon = 'Polygon'
-}
-
-export enum TestnetChain {
+    Polygon = 'Polygon',
     Goerli = 'Goerli'
 }
 
-export type MainnetChainType = keyof typeof MainnetChain
-export type TestnetChainType = keyof typeof TestnetChain
-export type SupportChainType = MainnetChainType | TestnetChainType
+export type SupportChainType = keyof typeof SupportChain;
 
-export interface IChainConfig {
+export interface ChainStateInterface {
     name: string,
     chainId: number,
     rpcUrls: string[],
@@ -25,5 +20,3 @@ export interface IChainConfig {
     },
     blockExplorerUrls: string
 }
-
-export type CurrencyType = 'NATIVE' | 'ERC20'

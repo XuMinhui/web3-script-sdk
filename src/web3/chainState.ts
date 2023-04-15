@@ -1,7 +1,7 @@
-import { IChainConfig, MainnetChain, TestnetChain } from "./type"
+import { ChainStateInterface, SupportChain } from "./type"
 
-const MainnetChainState: Record<MainnetChain, IChainConfig> = {
-    [MainnetChain.Ethereum]: {
+export const chainStateList: Record<SupportChain, ChainStateInterface> = {
+    [SupportChain.Ethereum]: {
         name: 'Ethereum Mainnet',
         chainId: 1,
         rpcUrls: ["https://rpc.ankr.com/eth"],
@@ -12,7 +12,7 @@ const MainnetChainState: Record<MainnetChain, IChainConfig> = {
         },
         blockExplorerUrls: 'https://etherscan.io/'
     },
-    [MainnetChain.Binance]: {
+    [SupportChain.Binance]: {
         name: 'Binance Smart Chain',
         chainId: 56,
         rpcUrls: ["https://bsc.blockpi.network/v1/rpc/public"],
@@ -23,7 +23,7 @@ const MainnetChainState: Record<MainnetChain, IChainConfig> = {
         },
         blockExplorerUrls: 'https://bscscan.com/'
     },
-    [MainnetChain.Arbitrum]: {
+    [SupportChain.Arbitrum]: {
         name: 'Arbitrum One',
         chainId: 42161,
         rpcUrls: ["https://arb1.arbitrum.io/rpc"],
@@ -34,7 +34,7 @@ const MainnetChainState: Record<MainnetChain, IChainConfig> = {
         },
         blockExplorerUrls: 'https://arbiscan.io'
     },
-    [MainnetChain.Optimism]: {
+    [SupportChain.Optimism]: {
         name: 'Optimism',
         chainId: 10,
         rpcUrls: [
@@ -47,7 +47,7 @@ const MainnetChainState: Record<MainnetChain, IChainConfig> = {
         },
         blockExplorerUrls: 'https://optimistic.etherscan.io'
     },
-    [MainnetChain.Polygon]: {
+    [SupportChain.Polygon]: {
         name: 'Polygon Mainnet',
         chainId: 137,
         rpcUrls: [
@@ -59,11 +59,8 @@ const MainnetChainState: Record<MainnetChain, IChainConfig> = {
             decimals: 18
         },
         blockExplorerUrls: 'https://polygonscan.com'
-    }
-}
-
-const TestnetChainState: Record<TestnetChain, IChainConfig> = {
-    [TestnetChain.Goerli]: {
+    },
+    [SupportChain.Goerli]: {
         name: 'Goerli Testnet',
         chainId: 5,
         rpcUrls: ["https://rpc.ankr.com/eth_goerli"],
@@ -75,5 +72,3 @@ const TestnetChainState: Record<TestnetChain, IChainConfig> = {
         blockExplorerUrls: 'https://goerli.etherscan.io/'
     }
 }
-
-export const chainState = { ...MainnetChainState, ...TestnetChainState }
