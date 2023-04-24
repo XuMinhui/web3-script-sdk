@@ -1,18 +1,18 @@
 import invariant from "tiny-invariant"
-import { ChainState } from "../src/class/ChainState"
+import { ChainNetwork } from "../src/class/ChainNetwork"
 import { CurrencyErc20 } from "../src/class/Currency"
 import { Multicall } from "../src/class/Multicall"
-import { bn_fromWei } from "../src/utils"
-import { SupportChain, ZERO_ADDRESS, multicallAddress } from "../src/web3"
+import { SupportChain, ZERO_ADDRESS } from "../src/web3"
 import { Web3Checker } from "../src/class/Checker"
 
 const runMulticall = async () => {
-    const ethereum = new ChainState(SupportChain.Ethereum)
-    const multicall = new Multicall(ethereum, multicallAddress[SupportChain.Ethereum])
+    const ethereum = new ChainNetwork(SupportChain.Ethereum)
+    // const multicall = new Multicall(ethereum, multicallAddress[SupportChain.Ethereum])
+    const multicall = new Multicall(ethereum, '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696')
 
     const ethereumUsdtAddress = '0xdAC17F958D2ee523a2206206994597C13D831ec7'
     invariant(Web3Checker.isAddress(ethereumUsdtAddress), `should received a address`)
-    const usdt = new CurrencyErc20(SupportChain.Ethereum, ethereumUsdtAddress)
+    const usdt = new CurrencyErc20(ethereum, ethereumUsdtAddress)
     await usdt.initialize()
 
     console.log(usdt.name)
@@ -29,8 +29,8 @@ const runMulticall = async () => {
     // const balance = usdt.contract.interface.decodeFunctionResult('balanceOf', decodedResults[2]).toString()
     const [name, totalSupply, balance] = Multicall.decode(decodedResults, [
         [usdt.contract, 'name'],
-        [usdt.contract, 'totalSupply', 'number', usdt.decimals],
-        [usdt.contract, 'balanceOf', 'number', usdt.decimals],
+        [usdt.contract, 'totalSupply'],
+        [usdt.contract, 'balanceOf'],
     ])
 
     console.log(totalSupply, name, balance)

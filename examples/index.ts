@@ -1,2 +1,2 @@
 // import './checker'
-import './multicall'
+import './multicallBatchQueryBalance'

@@ -18,5 +18,6 @@ export interface ChainStateInterface {
         symbol: string,
         decimals: number,
     },
-    blockExplorerUrls: string
+    blockExplorerUrls: string,
+    multicall?: string
 }

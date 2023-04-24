@@ -10,7 +10,8 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://etherscan.io/'
+        blockExplorerUrls: 'https://etherscan.io/',
+        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
     },
     [SupportChain.Binance]: {
         name: 'Binance Smart Chain',
@@ -32,7 +33,8 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://arbiscan.io'
+        blockExplorerUrls: 'https://arbiscan.io',
+        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
     },
     [SupportChain.Optimism]: {
         name: 'Optimism',
@@ -45,7 +47,8 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://optimistic.etherscan.io'
+        blockExplorerUrls: 'https://optimistic.etherscan.io',
+        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
     },
     [SupportChain.Polygon]: {
         name: 'Polygon Mainnet',
@@ -58,7 +61,8 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'Matic',
             decimals: 18
         },
-        blockExplorerUrls: 'https://polygonscan.com'
+        blockExplorerUrls: 'https://polygonscan.com',
+        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
     },
     [SupportChain.Goerli]: {
         name: 'Goerli Testnet',
@@ -69,6 +73,7 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://goerli.etherscan.io/'
+        blockExplorerUrls: 'https://goerli.etherscan.io/',
+        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
     }
 }
