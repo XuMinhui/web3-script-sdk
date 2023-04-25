@@ -22,7 +22,8 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'BNB',
             decimals: 18
         },
-        blockExplorerUrls: 'https://bscscan.com/'
+        blockExplorerUrls: 'https://bscscan.com/',
+        multicall: '0xcD1163D095d80786E0BdE074dF6fA683dD896230'
     },
     [SupportChain.Arbitrum]: {
         name: 'Arbitrum One',
