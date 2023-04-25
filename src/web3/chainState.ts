@@ -75,5 +75,18 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
         },
         blockExplorerUrls: 'https://goerli.etherscan.io/',
         multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
+    },
+    [SupportChain.Sepolia]: {
+        name: 'Sepolia Testnet',
+        chainId: 11155111,
+        rpcUrls: ["https://ethereum-sepolia.blockpi.network/v1/rpc/public"],
+        nativeCurrency: {
+            name: 'Sepolia ETH',
+            symbol: 'ETH',
+            decimals: 18
+        },
+        blockExplorerUrls: 'https://sepolia.etherscan.io/',
+        multicall: '0xE95c7a5bACDc227BDBac477506C82d4717c3916c'
     }
+
 }

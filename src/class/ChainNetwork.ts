@@ -36,6 +36,10 @@ export class ChainNetwork {
         return new Multicall(this, multicallAddr)
     }
 
+    // calGasDust(gasLimit: number) {
+    //     const gasPrice =  
+    // }
+
     // 拼接 Etherscan link
     public getViewScanLink(transactionOrHashOrAddress: ethers.ContractTransaction | string) {
         if (!this.state.blockExplorerUrls) return ''

@@ -4,7 +4,8 @@ export enum SupportChain {
     Arbitrum = 'Arbitrum',
     Optimism = 'Optimism',
     Polygon = 'Polygon',
-    Goerli = 'Goerli'
+    Goerli = 'Goerli',
+    Sepolia = 'Sepolia'
 }
 
 export type SupportChainType = keyof typeof SupportChain;

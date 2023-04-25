@@ -6,7 +6,7 @@
     "url": "https://yitian.blog"
   },
   "description": "web3-script-sdk",
-  "version": "1.2.1",
+  "version": "1.2.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

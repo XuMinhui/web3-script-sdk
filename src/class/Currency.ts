@@ -31,6 +31,9 @@ class CurrencyBase {
         this.chain = chainNetwork.chain
         this.type = type
         this.address = address
+        this.decimals = decimals
+        this.symbol = symbol
+        this.name = name
     }
 
     public equals(other: CurrencyErc20): boolean {
