@@ -1,32 +1,25 @@
 import { ethers } from 'ethers'
-import { ChainStateInterface, SupportChain, chainStateList } from '../web3'
+import { ChainStateInterface, SupportChain, chainStateList, multicallAddress } from '../web3'
 import { Web3Checker } from './Checker'
 import invariant from 'tiny-invariant'
 import { Multicall } from './Multicall'
 
 export class ChainNetwork {
+    public provider: ethers.providers.JsonRpcProvider
     public readonly state: ChainStateInterface
     public readonly chain: SupportChain | "OtherChain"
     public readonly chainId: number
-    public provider: ethers.providers.JsonRpcProvider
     public readonly multicallAddr?: string
 
-    constructor(chain: SupportChain | ChainStateInterface) {
-        if (typeof chain === 'object') {
-            // chain is ChainStateInterface
-            this.chain = 'OtherChain'
-            this.state = chain
-        } else {
-            this.chain = chain
-            this.state = chainStateList[chain]
-        }
-
+    constructor(chain: SupportChain) {
+        this.chain = chain
+        this.state = chainStateList[chain]
         this.provider = new ethers.providers.JsonRpcProvider(this.state.rpcUrls[0])
         this.chainId = this.state.chainId
-        this.multicallAddr = this.state.multicall
+        this.multicallAddr = multicallAddress[chain]
     }
 
-    updateRpc(rpc: string) {
+    updateProviderRpc(rpc: string) {
         this.provider = new ethers.providers.JsonRpcProvider(rpc)
     }
 
@@ -36,11 +29,6 @@ export class ChainNetwork {
         return new Multicall(this, multicallAddr)
     }
 
-    // calGasDust(gasLimit: number) {
-    //     const gasPrice =  
-    // }
-
-    // 拼接 Etherscan link
     public getViewScanLink(transactionOrHashOrAddress: ethers.ContractTransaction | string) {
         if (!this.state.blockExplorerUrls) return ''
         const hashOrAddress = typeof transactionOrHashOrAddress === 'string' ? transactionOrHashOrAddress : transactionOrHashOrAddress.hash

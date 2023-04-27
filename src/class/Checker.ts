@@ -2,9 +2,9 @@ import boxen from "boxen";
 import Joi from "joi";
 import { existsSync } from "fs";
 import { ethers } from "ethers";
-import { bn_fromWei } from "../utils";
 import pTimeout from "p-timeout";
 import { chainStateList, SupportChainType } from "../web3";
+import { bn_fromWei, } from "../utils";
 
 export class Web3Checker {
     static isAddress(address: string) {

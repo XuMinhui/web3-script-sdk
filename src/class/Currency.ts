@@ -1,19 +1,13 @@
 import { ethers } from "ethers";
-import { ZERO_ADDRESS } from "../web3/constants";
 import { SupportChainType } from "../web3";
 import { Multicall__factory, UniversalErc20, UniversalErc20__factory } from "../web3/types";
 import { ChainNetwork } from "./ChainNetwork";
 import invariant from "tiny-invariant";
 import { Multicall } from "./Multicall";
 import { bn_fromWei } from "../utils";
+import { ZERO_ADDRESS } from '../constants'
 
 type CurrencyType = 'Native' | 'Erc20'
-/**
- * WEI is origin wei
- * AMOUNT is wrapper bn_parseWei(decimals)
- * SIGNUFICAN is forEmample 1,000,000
- */
-type FormatType = 'WEI' | 'AMOUNT' | 'SIGNUFICAN'
 class CurrencyBase {
     protected provider: ethers.providers.Provider
     readonly chainNetwork: ChainNetwork
@@ -49,7 +43,7 @@ export class CurrencyNative extends CurrencyBase {
         super(chainNetwork, 'Native', ZERO_ADDRESS, decimals, symbol, name)
     }
 
-    async batchQueryBalance(addresses: string[], format: FormatType = 'WEI') {
+    async batchQueryBalance(addresses: string[]) {
         const multicall = this.chainNetwork.getMulticall()
         invariant(multicall, 'Multicall not supported/not configured for this chain')
         const muticallContract = Multicall__factory.connect(multicall.address, this.provider)
@@ -61,12 +55,17 @@ export class CurrencyNative extends CurrencyBase {
         )
 
         const balances: string[] = Multicall.decode(decodedResults, addresses.map(_ => [muticallContract, 'getEthBalance']))
-        const results: Record<string, string | number> = {}
+        return balances
+    }
+
+    async batchQueryAmount(addresses: string[]) {
+        const balances = await this.batchQueryBalance(addresses)
+        const amounts: Record<string, number> = {}
         addresses.forEach((address, index) => {
-            results[address] = format === 'AMOUNT' ? bn_fromWei(balances[index]) : balances[index]
+            amounts[address] = bn_fromWei(balances[index], this.decimals)
         })
 
-        return results
+        return amounts
     }
 }
 
@@ -85,7 +84,7 @@ export class CurrencyErc20 extends CurrencyBase {
         return this
     }
 
-    async batchQueryBalance(addresses: string[], format: FormatType = 'WEI') {
+    async batchQueryBalance(addresses: string[]) {
         const multicall = this.chainNetwork.getMulticall()
         invariant(multicall, 'Multicall not supported/not configured for this chain')
         const tarErc20Contract = UniversalErc20__factory.connect(this.address, this.provider)
@@ -97,12 +96,19 @@ export class CurrencyErc20 extends CurrencyBase {
         )
 
         const balances: string[] = Multicall.decode(decodedResults, addresses.map(_ => [tarErc20Contract, 'balanceOf']))
-        const results: Record<string, string | number> = {}
+
+        return balances
+    }
+
+    async batchQueryAmount(addresses: string[]) {
+        this.decimals = this.decimals || await this.contract.decimals()
+
+        const balances = await this.batchQueryBalance(addresses)
+        const amounts: Record<string, number> = {}
         addresses.forEach((address, index) => {
-            // TODO to Significant
-            results[address] = format === 'AMOUNT' ? bn_fromWei(balances[index]) : balances[index]
+            amounts[address] = bn_fromWei(balances[index], this.decimals)
         })
 
-        return results
+        return amounts
     }
 }

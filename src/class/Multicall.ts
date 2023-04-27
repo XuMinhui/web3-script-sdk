@@ -3,7 +3,7 @@ import { SupportChain } from "../web3";
 import { Multicall__factory } from "../web3/types";
 import { ChainNetwork } from "./ChainNetwork";
 import { number } from "joi";
-import { bn_fromWei, bn_parseWei } from "../utils";
+import { bn_fromWei, bn_parseWei } from "utils";
 import invariant from "tiny-invariant";
 
 type MulticallCallsFragmentInterface = ([string, string] | { target: string, callData: string })[]

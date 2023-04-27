@@ -10,8 +10,7 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://etherscan.io/',
-        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
+        blockExplorerUrls: 'https://etherscan.io/'
     },
     [SupportChain.Binance]: {
         name: 'Binance Smart Chain',
@@ -22,8 +21,7 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'BNB',
             decimals: 18
         },
-        blockExplorerUrls: 'https://bscscan.com/',
-        multicall: '0xcD1163D095d80786E0BdE074dF6fA683dD896230'
+        blockExplorerUrls: 'https://bscscan.com/'
     },
     [SupportChain.Arbitrum]: {
         name: 'Arbitrum One',
@@ -34,8 +32,7 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://arbiscan.io',
-        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
+        blockExplorerUrls: 'https://arbiscan.io'
     },
     [SupportChain.Optimism]: {
         name: 'Optimism',
@@ -48,8 +45,7 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://optimistic.etherscan.io',
-        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
+        blockExplorerUrls: 'https://optimistic.etherscan.io'
     },
     [SupportChain.Polygon]: {
         name: 'Polygon Mainnet',
@@ -62,8 +58,7 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'Matic',
             decimals: 18
         },
-        blockExplorerUrls: 'https://polygonscan.com',
-        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
+        blockExplorerUrls: 'https://polygonscan.com'
     },
     [SupportChain.Goerli]: {
         name: 'Goerli Testnet',
@@ -74,8 +69,7 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://goerli.etherscan.io/',
-        multicall: '0x5BA1e12693Dc8F9c48aAD8770482f4739bEeD696'
+        blockExplorerUrls: 'https://goerli.etherscan.io/'
     },
     [SupportChain.Sepolia]: {
         name: 'Sepolia Testnet',
@@ -86,8 +80,6 @@ export const chainStateList: Record<SupportChain, ChainStateInterface> = {
             symbol: 'ETH',
             decimals: 18
         },
-        blockExplorerUrls: 'https://sepolia.etherscan.io/',
-        multicall: '0xE95c7a5bACDc227BDBac477506C82d4717c3916c'
+        blockExplorerUrls: 'https://sepolia.etherscan.io/'
     }
-
 }
